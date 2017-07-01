@@ -1,0 +1,10 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+
+	<!-- Icons -->
+	<qresource prefix="/icons">
+		<!-- Source - https://material.io/icons/ -->
+		<file alias="settings">Icons/ic_settings_black_24px.svg</file>
+	</qresource>
+
+</RCC>

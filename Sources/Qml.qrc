@@ -1,0 +1,10 @@
+<RCC>
+	<qresource>
+		<file alias="BlogSettings.qml">Qml/BlogSettings.qml</file>
+		<file alias="TumblrSettings.qml">Qml/TumblrSettings.qml</file>
+		<file alias="Main.qml">Qml/Main.qml</file>
+		<file alias="RemoveBlog.qml">Qml/RemoveBlog.qml</file>
+		<file alias="WindowSettings.qml">Qml/WindowSettings.qml</file>
+		<file alias="WindowState.qml">Qml/WindowState.qml</file>
+	</qresource>
+</RCC>
