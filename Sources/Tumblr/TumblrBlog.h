@@ -25,6 +25,7 @@ namespace Tumblr
 		Q_PROPERTY(int mediaCount READ GetMediaCount NOTIFY dataChanged)
 		Q_PROPERTY(QImage avatar READ GetAvatar NOTIFY dataChanged)
 		Q_PROPERTY(QString output READ GetOutputFolder WRITE SetOutputFolder NOTIFY dataChanged)
+		Q_PROPERTY(int maxPageUpdate READ GetMaxPageUpdate WRITE SetMaxPageUpdate NOTIFY dataChanged)
 
 	signals:
 
@@ -45,6 +46,8 @@ namespace Tumblr
 		QString					GetUrl(void) const;
 		const QString &			GetOutputFolder(void) const;
 		void					SetOutputFolder(const QString & value);
+		int						GetMaxPageUpdate(void) const;
+		void					SetMaxPageUpdate(int value);
 		int						GetMediaCount(void) const;
 		int						GetTodoCount(void) const;
 		const QString &			GetInfo(void) const;
@@ -65,6 +68,9 @@ namespace Tumblr
 
 		//! The output folder
 		QString m_OutputFolder;
+
+		//! The maximum number of pages to update
+		int m_MaxPageUpdate;
 
 		//! The list medias to download
 		QSet< QString > m_Todos;

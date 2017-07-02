@@ -27,9 +27,10 @@ namespace Tumblr
 	//!
 	//! Create a new empty blog and connect its signals
 	//!
-	Blog * Database::CreateBlog(const QString & name, const QString & outputFolder)
+	Blog * Database::CreateBlog(const QString & name, const QString & outputFolder, int maxPageUpdate)
 	{
 		Blog * blog = NEW Blog(name, outputFolder);
+		blog->SetMaxPageUpdate(maxPageUpdate);
 
 		// todo: optimize this to watch for individual changes, and emit a dataChanged
 		// with the correct roles
@@ -111,7 +112,7 @@ namespace Tumblr
 	//!
 	//! Add a new blog
 	//!
-	void Database::addBlog(const QString & url, const QString & outputFolder)
+	void Database::addBlog(const QString & url, const QString & outputFolder, int maxPageUpdate)
 	{
 		// validate
 		QString name = Blog::ValidateUrl(url);
@@ -131,7 +132,7 @@ namespace Tumblr
 
 		// add the new blog
 		this->beginInsertRows(QModelIndex(), m_Blogs.size(), m_Blogs.size());
-		m_Blogs.push_back(this->CreateBlog(name, outputFolder));
+		m_Blogs.push_back(this->CreateBlog(name, outputFolder, maxPageUpdate));
 		this->endInsertRows();
 	}
 

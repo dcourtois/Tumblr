@@ -10,7 +10,7 @@ Dialog {
 	standardButtons: blog ? Dialog.Ok : Dialog.Ok | Dialog.Cancel
 
 	// private properties
-	property int _labelWidth: 100
+	property int _labelWidth: 150
 
 	// externally set
 	property var blog
@@ -74,6 +74,26 @@ Dialog {
 		}
 
 		//
+		// The max numbeer of pages to scan
+		//
+		RowLayout {
+			spacing: 10
+			Label {
+				Layout.minimumWidth: _labelWidth
+				text: "Max Page Update"
+				horizontalAlignment: Text.AlignRight
+			}
+			TextField {
+				Layout.fillWidth: true
+				id: maxPageUpdate
+				placeholderText: "The maximum number of pages to scan on updates. -1 for 'no limit'."
+				text: blog ? blog.maxPageUpdate : "10";
+				onTextChanged: if (blog) { blog.maxPageUpdate = parseInt(text); }
+				validator: IntValidator { }
+			}
+		}
+
+		//
 		// fill the remaining space
 		//
 		Item {
@@ -89,8 +109,10 @@ Dialog {
 		if (blog !== undefined) {
 			return;
 		}
+
+		// validate settings
 		if (address.text.length > 0 && output.text.length > 0) {
-			tumblrDatabase.addBlog(address.text, output.text);
+			tumblrDatabase.addBlog(address.text, output.text, parseInt(maxPageUpdate.text));
 		}
 	}
 }

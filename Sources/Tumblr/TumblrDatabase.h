@@ -35,7 +35,7 @@ namespace Tumblr
 		Q_INVOKABLE void	update(int index);
 		Q_INVOKABLE void	cancelAll();
 		Q_INVOKABLE void	cancel(int index);
-		Q_INVOKABLE void	addBlog(const QString & url, const QString & outputFolder);
+		Q_INVOKABLE void	addBlog(const QString & url, const QString & outputFolder, int maxPageUpdate);
 		Q_INVOKABLE Blog *	blog(int index);
 		Q_INVOKABLE void	remove(int index, bool removeMedias);
 		Q_INVOKABLE void	importDatabase(const QString & filename);
@@ -43,7 +43,7 @@ namespace Tumblr
 
 	private:
 
-		Blog *	CreateBlog(const QString & name = "", const QString & outputFolder = "");
+		Blog *	CreateBlog(const QString & name = "", const QString & outputFolder = "", int maxPageUpdate = 10);
 		QString	GetDatabaseFilename(void) const;
 
 		//! The list of blogs

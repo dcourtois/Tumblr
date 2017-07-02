@@ -4,9 +4,6 @@
 #include "Utils/Image.h"
 
 
-// The max number of request per update
-#define MAX_PAGE_CHECK	10
-
 // The max number of consecutive medias we already have
 #define MAX_CONSECUTIVE_MEDIAS 20
 
@@ -37,6 +34,7 @@ namespace Tumblr
 		: QObject(nullptr)
 		, m_Name(name)
 		, m_OutputFolder(outputFolder)
+		, m_MaxPageUpdate(10)
 		, m_TaskManager(1)
 		, m_NetworkManager(nullptr)
 		, m_CancelUpdate(false)
@@ -74,11 +72,20 @@ namespace Tumblr
 			medias.append(media);
 		}
 
+		// and the todos
+		QJsonArray todos;
+		for (const QString & todo : m_Todos)
+		{
+			todos.append(todo);
+		}
+
 		// serialize the blog
 		desc["name"]	= m_Name;
 		desc["output"]	= m_OutputFolder;
-		desc["medias"]	= medias;
+		desc["maxPage"]	= m_MaxPageUpdate;
 		desc["avatar"]	= ImageToString(m_Avatar);
+		desc["medias"]	= medias;
+		desc["todos"]	= todos;
 	}
 
 	//!
@@ -89,12 +96,17 @@ namespace Tumblr
 		// general infos
 		m_Name			= desc["name"].toString(),
 		m_OutputFolder	= desc["output"].toString();
+		m_MaxPageUpdate	= desc.contains("maxPage") == true ? desc["maxPage"].toInt() : 10;
 		m_Avatar		= StringToImage(desc["avatar"].toString());
 
-		// load medias
+		// load medias and todos
 		for (QJsonValueRef media : desc["medias"].toArray())
 		{
 			m_Medias.insert(media.toString());
+		}
+		for (QJsonValueRef todo : desc["todos"].toArray())
+		{
+			m_Todos.insert(todo.toString());
 		}
 
 		// changed !
@@ -133,6 +145,26 @@ namespace Tumblr
 		if (m_OutputFolder != value)
 		{
 			m_OutputFolder = value;
+			emit dataChanged();
+		}
+	}
+
+	//!
+	//! Get the maximum number of pages scanned during an update
+	//!
+	int Blog::GetMaxPageUpdate(void) const
+	{
+		return m_MaxPageUpdate;
+	}
+
+	//!
+	//! Set the maximum number of pages scanned during an update
+	//!
+	void Blog::SetMaxPageUpdate(int value)
+	{
+		if (m_MaxPageUpdate != value)
+		{
+			m_MaxPageUpdate = value;
 			emit dataChanged();
 		}
 	}
@@ -253,7 +285,7 @@ namespace Tumblr
 			this->SetInfo("Scanning For New Medias...");
 
 			// get the new posts
-			for (int i = 0; i < MAX_PAGE_CHECK; ++i)
+			for (int i = 0; i < m_MaxPageUpdate; ++i)
 			{
 				// check for cancellation
 				if (m_CancelUpdate == true)
