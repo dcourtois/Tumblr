@@ -355,7 +355,17 @@ namespace Tumblr
 
 				// get data
 				QString url = *m_Todos.begin();
-				QByteArray reply = RequestUrl(*m_NetworkManager, url);
+				const QByteArray reply = RequestUrl(*m_NetworkManager, url);
+
+				// detect png hidden in jpg files ...
+				const QString extension = url.section('.', -1, -1).toLower();
+				if (extension == "jpg" || extension == "jpeg")
+				{
+					if (reply[0] == static_cast< char >(0x89) && reply[1] == static_cast< char >(0x50))
+					{
+						url = url.section('.', 0, -2) + ".png";
+					}
+				}
 
 				// check again for cancellation
 				if (m_CancelUpdate == true)
@@ -364,12 +374,12 @@ namespace Tumblr
 				}
 
 				// update counts and signal
+				m_Medias.insert(*m_Todos.begin());
 				m_Todos.erase(m_Todos.begin());
-				m_Medias.insert(url);
 				emit dataChanged();
 
 				// save to disk (dirty hack with extensions ...)
-				QString filename = url.section('/', -1, -1);
+				const QString filename = url.section('/', -1, -1);
 				QFile file(m_OutputFolder + "/" + filename);
 				if (file.open(QIODevice::WriteOnly) == true)
 				{
