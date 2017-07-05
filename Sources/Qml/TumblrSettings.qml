@@ -73,11 +73,11 @@ Dialog {
 			}
 			ComboBox {
 				Layout.fillWidth: true
-				currentIndex: find(settings.databaseLocation);
 				model: [
 					"System",
 					"Application"
 				]
+				Component.onCompleted: currentIndex = find(settings.databaseLocation)
 				onCurrentTextChanged: settings.databaseLocation = currentText
 			}
 		}
