@@ -81,7 +81,7 @@ typedef std::unordered_map<
 	std::tuple< std::size_t, const char *, int >,
 	std::hash< void * >,
 	std::equal_to< void * >,
-	Allocator< std::pair< void *, std::tuple< std::size_t, const char *, int > > >
+	Allocator< std::pair< void * const, std::tuple< std::size_t, const char *, int > > >
 > AllocatedBlockMap;
 
 //!
