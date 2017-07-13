@@ -367,12 +367,6 @@ namespace Tumblr
 					}
 				}
 
-				// check again for cancellation
-				if (m_CancelUpdate == true)
-				{
-					break;
-				}
-
 				// update counts and signal
 				m_Medias.insert(*m_Todos.begin());
 				m_Todos.erase(m_Todos.begin());
@@ -464,6 +458,16 @@ namespace Tumblr
 			++m_Consecutive;
 			return m_Consecutive > MAX_CONSECUTIVE_MEDIAS ? true : false;
 		}
+	}
+
+	//!
+	//! Reset the list of downloaded medias
+	//!
+	void Blog::reset(void)
+	{
+		m_Medias.clear();
+		m_Todos.clear();
+		emit dataChanged();
 	}
 
 } // namespace Tumblr

@@ -94,6 +94,19 @@ Dialog {
 		}
 
 		//
+		// For existing blogs, allow to clear list of previously downloaded medias
+		//
+		Loader {
+			Layout.fillWidth: true
+			active: blog ? true : false
+			sourceComponent: Button {
+				Layout.fillWidth: true
+				text: "Reset";
+				onClicked: blog.reset();
+			}
+		}
+
+		//
 		// fill the remaining space
 		//
 		Item {

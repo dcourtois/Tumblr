@@ -58,6 +58,9 @@ namespace Tumblr
 		void					RemoveMedias(void);
 		static QString			ValidateUrl(const QString & url);
 
+		// QML API
+		Q_INVOKABLE void		reset(void);
+
 	private:
 
 		bool	AddMedia(const QString & url);
