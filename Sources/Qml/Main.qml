@@ -18,6 +18,13 @@ ApplicationWindow {
 	// custom properties
 	property int countWidth: 100
 
+	// app shortcut to close the window
+	Shortcut {
+		context: Qt.ApplicationShortcut
+		sequence: StandardKey.Quit
+		onActivated: Qt.quit();
+	}
+
 	// our database
 	TumblrDatabase {
 		id: tumblrDatabase
