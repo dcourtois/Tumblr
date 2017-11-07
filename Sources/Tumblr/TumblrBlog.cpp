@@ -219,7 +219,7 @@ namespace Tumblr
 	//!
 	QString Blog::ValidateUrl(const QString & url)
 	{
-		static QRegExp regexp("http://([^\\.]+)\\.tumblr\\.com/?");
+		static QRegExp regexp("https?://([^\\.]+)\\.tumblr\\.com/?");
 		return regexp.exactMatch(url) == true ? regexp.capturedTexts()[1] : "";
 	}
 
