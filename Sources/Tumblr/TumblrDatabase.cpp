@@ -11,6 +11,9 @@ namespace Tumblr
 	//!
 	Database::Database(QObject * parent)
 		: QAbstractItemModel(parent)
+		, m_Location(g_Settings.value("databaseLocation", "System").toString())
+		, m_Secret(g_Settings.value("oauthSecret", "").toString())
+		, m_Key(g_Settings.value("oauthKey", "").toString())
 	{
 		this->importDatabase(this->GetDatabaseFilename());
 	}
@@ -48,16 +51,14 @@ namespace Tumblr
 	//!
 	QString	Database::GetDatabaseFilename(void) const
 	{
-		QSettings settings;
-		QString location = settings.value("databaseLocation", "System").toString();
-		if (location == "System")
+		if (m_Location == "System")
 		{
 			QStringList locations = QStandardPaths::standardLocations(QStandardPaths::AppLocalDataLocation);
 			Q_ASSERT(locations.empty() == false);
 			QDir().mkpath(locations[0]);
 			return locations[0] + "/Blogs.json";
 		}
-		else if (location == "Application")
+		else if (m_Location == "Application")
 		{
 			QString str = QCoreApplication::applicationDirPath() + "/Blogs.json";
 			return str;
@@ -66,6 +67,69 @@ namespace Tumblr
 		{
 			Q_ASSERT(false);
 			return "";
+		}
+	}
+
+	//!
+	//! Get the database location
+	//!
+	const QString & Database::GetLocation(void) const
+	{
+		return m_Location;
+	}
+
+	//!
+	//! Set the database location
+	//!
+	void Database::SetLocation(const QString & location)
+	{
+		if (location != m_Location)
+		{
+			m_Location = location;
+			qDebug(m_Location.toStdString().c_str());
+			emit locationChanged(m_Location);
+		}
+	}
+
+	//!
+	//! Get the secret
+	//!
+	const QString & Database::GetSecret(void) const
+	{
+		return m_Secret;
+	}
+
+	//!
+	//! Set the secret
+	//!
+	void Database::SetSecret(const QString & secret)
+	{
+		if (secret != m_Secret)
+		{
+			m_Secret = secret;
+			g_Settings.setValue("oauthSecret", m_Secret);
+			emit locationChanged(m_Secret);
+		}
+	}
+
+	//!
+	//! Get the key
+	//!
+	const QString & Database::GetKey(void) const
+	{
+		return m_Key;
+	}
+
+	//!
+	//! Set the key
+	//!
+	void Database::SetKey(const QString & key)
+	{
+		if (key != m_Key)
+		{
+			m_Key = key;
+			g_Settings.setValue("oauthKey", m_Key);
+			emit locationChanged(m_Key);
 		}
 	}
 

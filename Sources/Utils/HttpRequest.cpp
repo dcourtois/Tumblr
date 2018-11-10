@@ -52,10 +52,14 @@ void RequestUrl(QNetworkAccessManager & networkManager, const QString & url, Suc
 //! @param url
 //!		The url to request.
 //!
+//! @param interrupt
+//!		A function that will be called while waiting for the request to complete,
+//!		to know if we should interrupt it or continue waiting.
+//!
 //! @returns
 //!		The reply or an empty array.
 //!
-QByteArray RequestUrl(QNetworkAccessManager & networkManager, const QString & url)
+QByteArray RequestUrl(QNetworkAccessManager & networkManager, const QString & url, InterruptionCallback interrupt)
 {
 	// prepare the request
 	QNetworkRequest request;
@@ -66,13 +70,20 @@ QByteArray RequestUrl(QNetworkAccessManager & networkManager, const QString & ur
 
 	// wait for the reply
 	QEventLoop loop;
-	QObject::connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
-	loop.exec();
+	while (reply->isFinished() == false && interrupt() == false)
+	{
+		loop.processEvents();
+	}
 
 	// return the result
-	QNetworkReply::NetworkError error = reply->error();
-	if (error != QNetworkReply::NoError)
+	if (reply->isFinished() == false)
 	{
+		qDebug("request was interrupted");
+		return QByteArray();
+	}
+	else if (reply->error() != QNetworkReply::NoError)
+	{
+		qDebug(reply->errorString().toStdString().c_str());
 		reply->deleteLater();
 		return QByteArray();
 	}

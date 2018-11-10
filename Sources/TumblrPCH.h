@@ -70,4 +70,11 @@
 #include "Utils/Memory.h"
 
 
+//------------------------------------------------------------------------------
+// Global stuff
+
+extern QSettings g_Settings;
+
+
+
 #endif // __TUMBLR_PCH_H__

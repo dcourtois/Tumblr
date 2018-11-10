@@ -91,7 +91,7 @@ namespace Tumblr
 		TaskManager m_TaskManager;
 
 		//! Network manager used during update (needs to be created on the thread
-		//! doing the requests)
+		//! doing the requests, thus heap allocated)
 		QNetworkAccessManager * m_NetworkManager;
 
 		//! Mutex used to protect the update

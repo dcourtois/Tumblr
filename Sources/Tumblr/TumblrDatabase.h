@@ -17,6 +17,16 @@ namespace Tumblr
 
 		Q_OBJECT
 
+		Q_PROPERTY(QString location READ GetLocation WRITE SetLocation NOTIFY locationChanged)
+		Q_PROPERTY(QString secret READ GetSecret WRITE SetSecret NOTIFY secretChanged)
+		Q_PROPERTY(QString key READ GetKey WRITE SetKey NOTIFY keyChanged)
+
+	signals:
+
+		void	locationChanged(const QString & value);
+		void	secretChanged(const QString & value);
+		void	keyChanged(const QString & value);
+
 	public:
 
 		Database(QObject * parent = nullptr);
@@ -29,6 +39,14 @@ namespace Tumblr
 		QModelIndex					parent(const QModelIndex & index) const final;
 		int							rowCount(const QModelIndex & parent = QModelIndex()) const final;
 		int							columnCount(const QModelIndex & parent = QModelIndex()) const final;
+
+		// C++ API
+		const QString &		GetLocation(void) const;
+		void				SetLocation(const QString & location);
+		const QString &		GetSecret(void) const;
+		void				SetSecret(const QString & secret);
+		const QString &		GetKey(void) const;
+		void				SetKey(const QString & key);
 
 		// QML API
 		Q_INVOKABLE void	updateAll();
@@ -48,6 +66,15 @@ namespace Tumblr
 
 		//! The list of blogs
 		QVector< Blog * > m_Blogs;
+
+		//! Database location
+		QString m_Location;
+
+		//! Auth secret
+		QString m_Secret;
+
+		//! Auth key
+		QString m_Key;
 
 	};
 

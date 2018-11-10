@@ -94,7 +94,7 @@ namespace Tumblr
 	void Blog::Deserialize(const QJsonObject & desc)
 	{
 		// general infos
-		m_Name			= desc["name"].toString(),
+		m_Name			= desc["name"].toString();
 		m_OutputFolder	= desc["output"].toString();
 		m_MaxPageUpdate	= desc.contains("maxPage") == true ? desc["maxPage"].toInt() : 10;
 		m_Avatar		= StringToImage(desc["avatar"].toString());
@@ -240,9 +240,8 @@ namespace Tumblr
 		m_CancelUpdate = false;
 
 		// get the OAuth values from the settings
-		QSettings settings;
-		QString oauthKey = settings.value("oauthKey", "").toString();
-		QString oauthSecret = settings.value("oauthSecret", "").toString();
+		QString oauthKey = g_Settings.value("oauthKey", "").toString();
+		QString oauthSecret = g_Settings.value("oauthSecret", "").toString();
 		if (oauthKey.isEmpty() == true || oauthSecret.isEmpty() == true)
 		{
 			m_UpdateMutex.unlock();
@@ -262,7 +261,11 @@ namespace Tumblr
 			this->SetInfo("Updating Avatar");
 
 			// request directly as a png
-			QByteArray reply = RequestUrl(*m_NetworkManager, QString("http://api.tumblr.com/v2/blog/%1/avatar/40").arg(m_Name));
+			QByteArray reply = RequestUrl(
+				*m_NetworkManager,
+				QString("http://api.tumblr.com/v2/blog/%1/avatar/40").arg(m_Name),
+				[&] (void) { return m_CancelUpdate; }
+			);
 
 			// check for cancellation
 			if (m_CancelUpdate == true)
@@ -299,7 +302,8 @@ namespace Tumblr
 					QString("http://api.tumblr.com/v2/blog/%1/posts?api_key=%2&reblog_info=false&notes_info=false&offset=%3")
 						.arg(m_Name)
 						.arg(oauthKey)
-						.arg(i * 20)
+						.arg(i * 20),
+					[&] (void) { return m_CancelUpdate; }
 				));
 
 				// check again for cancellation, and errors
@@ -355,7 +359,22 @@ namespace Tumblr
 
 				// get data
 				QString url = *m_Todos.begin();
-				const QByteArray reply = RequestUrl(*m_NetworkManager, url);
+				const QByteArray reply = RequestUrl(
+					*m_NetworkManager,
+					url,
+					[&] (void) { return m_CancelUpdate; }
+				);
+
+				// update counts and signal
+				m_Medias.insert(*m_Todos.begin());
+				m_Todos.erase(m_Todos.begin());
+				emit dataChanged();
+
+				// check if the reply is valid
+				if (reply.size() == 0)
+				{
+					continue;
+				}
 
 				// detect png hidden in jpg files ...
 				const QString extension = url.section('.', -1, -1).toLower();
@@ -367,16 +386,12 @@ namespace Tumblr
 					}
 				}
 
-				// update counts and signal
-				m_Medias.insert(*m_Todos.begin());
-				m_Todos.erase(m_Todos.begin());
-				emit dataChanged();
-
 				// save to disk (dirty hack with extensions ...)
 				const QString filename = url.section('/', -1, -1);
 				QFile file(m_OutputFolder + "/" + filename);
 				if (file.open(QIODevice::WriteOnly) == true)
 				{
+					qDebug((m_OutputFolder + "/" + filename).toStdString().c_str());
 					file.write(reply);
 					file.close();
 				}
@@ -390,6 +405,7 @@ namespace Tumblr
 
 			// cleanup
 			DELETE m_NetworkManager;
+			m_NetworkManager = nullptr;
 
 			// release the mutex
 			m_UpdateMutex.unlock();

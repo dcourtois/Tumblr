@@ -17,14 +17,6 @@ Dialog {
 	property var tumblrDatabase
 	property var settings
 
-	// the settings
-	Settings {
-		id: settings
-		property string oauthKey: ""
-		property string oauthSecret: ""
-		property string databaseLocation: "System"
-	}
-
 	// main layout
 	ColumnLayout {
 		anchors.fill: parent
@@ -38,11 +30,11 @@ Dialog {
 				horizontalAlignment: Text.AlignRight
 			}
 			TextField {
+				id: key
 				Layout.fillWidth: true
 				Layout.minimumWidth: _keyWidth
 				placeholderText: "Tumblr API's OAuth Key"
-				text: settings.oauthKey
-				onTextChanged: settings.oauthKey = text
+				text: tumblrDatabase.key
 			}
 		}
 
@@ -55,11 +47,11 @@ Dialog {
 				horizontalAlignment: Text.AlignRight
 			}
 			TextField {
+				id: secret
 				Layout.fillWidth: true
 				Layout.minimumWidth: _keyWidth
 				placeholderText: "Tumblr API's OAuth Secret"
-				text: settings.oauthSecret
-				onTextChanged: settings.oauthSecret = text
+				text: tumblrDatabase.secret
 			}
 		}
 
@@ -72,13 +64,13 @@ Dialog {
 				horizontalAlignment: Text.AlignRight
 			}
 			ComboBox {
+				id: location
 				Layout.fillWidth: true
 				model: [
 					"System",
 					"Application"
 				]
-				Component.onCompleted: currentIndex = find(settings.databaseLocation)
-				onCurrentTextChanged: settings.databaseLocation = currentText
+				Component.onCompleted: currentIndex = find(tumblrDatabase.location)
 			}
 		}
 
@@ -89,7 +81,7 @@ Dialog {
 			onPressed: chooseDatabase.open()
 			Dialogs.FileDialog {
 				id: chooseDatabase
-				onAccepted: tumblrDatabase.importDatabase(fileUrl.toString().replace("file://", ""));
+				onAccepted: tumblrDatabase.importDatabase(fileUrl.toString().replace("file:///", ""));
 			}
 		}
 
@@ -98,5 +90,12 @@ Dialog {
 			Layout.fillHeight: true
 			Layout.columnSpan: 2
 		}
+	}
+
+	// on ok, set the database options
+	onAccepted: {
+		tumblrDatabase.location = location.currentText;
+		tumblrDatabase.secret = secret.text;
+		tumblrDatabase.key = key.text;
 	}
 }
