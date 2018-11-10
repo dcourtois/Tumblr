@@ -18,6 +18,7 @@ SOURCES += \
     Sources/Tumblr/TumblrDatabase.cpp \
     Sources/Utils/HttpRequest.cpp \
     Sources/Utils/Image.cpp \
+	Sources/Utils/Logger.cpp \
     Sources/Utils/Memory.cpp
 
 RESOURCES += \
@@ -29,8 +30,9 @@ HEADERS += \
     Sources/TumblrPCH.h \
     Sources/Tumblr/TumblrBlog.h \
     Sources/Tumblr/TumblrDatabase.h \
-    Sources/Utils/HttpRequest.h \
-    Sources/Utils/Image.h \
+	Sources/Utils/HttpRequest.h \
+	Sources/Utils/Image.h \
+	Sources/Utils/Logger.h \
     Sources/Utils/Memory.h \
     Sources/Utils/TaskManager.h
 

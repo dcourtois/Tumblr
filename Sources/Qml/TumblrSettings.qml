@@ -74,6 +74,21 @@ Dialog {
 			}
 		}
 
+		// enabled logging to file
+		RowLayout {
+			spacing: 10
+			Label {
+				Layout.minimumWidth: _labelWidth
+				text: "Enabled Logs"
+				horizontalAlignment: Text.AlignRight
+			}
+			CheckBox {
+				id: logging
+				Layout.fillWidth: false
+				Component.onCompleted: checked = logger.enabled
+			}
+		}
+
 		// import database from somewhere
 		Button {
 			Layout.fillWidth: true
@@ -94,6 +109,7 @@ Dialog {
 
 	// on ok, set the database options
 	onAccepted: {
+		logger.enabled = logging.checked;
 		tumblrDatabase.location = location.currentText;
 		tumblrDatabase.secret = secret.text;
 		tumblrDatabase.key = key.text;
